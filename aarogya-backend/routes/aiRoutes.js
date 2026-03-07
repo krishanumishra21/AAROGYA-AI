@@ -203,43 +203,69 @@ router.post("/recommend-doctor", authMiddleware, async (req, res) => {
       return res.status(400).json({ message: "Symptom required" })
     }
 
-    let specialization = "General"
-
-    const s = symptom.toLowerCase()
-
-    if (s.includes("heart") || s.includes("chest")) {
-      specialization = "Cardiology"
-    }
-    else if (s.includes("skin")) {
-      specialization = "Dermatology"
-    }
-    else if (s.includes("bone") || s.includes("joint")) {
-      specialization = "Orthopedics"
-    }
-    else if (s.includes("brain") || s.includes("head")) {
-      specialization = "Neurology"
-    }
-
     const user = await User.findById(req.user.id)
 
-    const doctors = await User.find({
+    // ------------------------------
+    // Detect specialization
+    // ------------------------------
+
+    let specialization = "General"
+    const s = symptom.toLowerCase()
+
+    for (const key in symptomMap) {
+      if (s.includes(key)) {
+        specialization = symptomMap[key]
+        break
+      }
+    }
+
+    console.log("Detected specialization:", specialization)
+
+    // ------------------------------
+    // Find specialist doctors
+    // ------------------------------
+
+    let doctors = await User.find({
       role: "doctor",
-      hospital: user.hospital,
-      specialization: specialization
+      specialization: { $regex: specialization, $options: "i" }
     })
 
-let hospitalName = "Partner Hospital"
+    // ------------------------------
+    // If no specialist found
+    // ------------------------------
 
-if (doctors.length > 0 && doctors[0].hospital) {
-  const hospital = await Hospital.findById(doctors[0].hospital)
-  if (hospital) hospitalName = hospital.name
-}
-console.log("Doctors found:", doctors)
-res.json({
-  hospital: hospitalName,
-  specialization,
-  doctors
-})
+    if (doctors.length === 0) {
+      console.log("No specialist found, showing general doctors")
+
+      doctors = await User.find({
+        role: "doctor"
+      }).limit(3)
+    }
+
+    console.log("Doctors found:", doctors)
+
+    // ------------------------------
+    // Get hospital name
+    // ------------------------------
+
+    let hospitalName = "Partner Hospital"
+
+    if (doctors.length > 0 && doctors[0].hospital) {
+      const hospital = await Hospital.findById(doctors[0].hospital)
+      if (hospital) {
+        hospitalName = hospital.name
+      }
+    }
+
+    // ------------------------------
+    // Send response
+    // ------------------------------
+
+    res.json({
+      hospital: hospitalName,
+      specialization,
+      doctors
+    })
 
   } catch (err) {
     console.error(err)

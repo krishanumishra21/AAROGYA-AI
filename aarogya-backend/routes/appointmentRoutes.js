@@ -3,7 +3,7 @@ const Appointment = require("../models/Appointment");
 const User = require("../models/User");
 const Hospital = require("../models/Hospital");
 const authMiddleware = require("../middleware/authMiddleware");
-
+const axios = require("axios");
 const router = express.Router();
 
 /* =========================
@@ -133,7 +133,15 @@ router.post("/book", authMiddleware, async (req, res) => {
       status: "Booked",
     });
 
-    await appointment.save();
+  await appointment.save();
+
+/* 🔔 Trigger n8n automation */
+await axios.post("http://localhost:5678/webhook-test/appointment-created", {
+  patient: req.user.id,
+  doctor: doctor,
+  hospital: hospital,
+  date: selectedDate
+});
 
     // Remove availability
     doctorUser.availableDates = doctorUser.availableDates.filter((d) => {
@@ -277,5 +285,29 @@ router.post("/add-availability", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+router.get("/hospital", authMiddleware, async (req, res) => {
+  try {
+
+    const user = await User.findById(req.user.id);
+
+    if (!user.hospital) {
+      return res.json([]);
+    }
+
+    const appointments = await Appointment.find({
+      hospital: user.hospital
+    })
+      .populate("patient", "name email")
+      .populate("doctor", "name specialization")
+      .sort({ date: -1 });
+
+    res.json(appointments);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch hospital appointments" });
+  }
+});
+
 
 module.exports = router;
