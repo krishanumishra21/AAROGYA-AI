@@ -15,7 +15,7 @@ export default function FloatingChat() {
 
     const token = localStorage.getItem("token");
 
-    const res = await fetch("http://localhost:5000/api/ai/chat", {
+    const res = await fetch("https://aarogya-ai-uugr.onrender.com/api/ai/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

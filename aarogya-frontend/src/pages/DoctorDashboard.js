@@ -186,7 +186,7 @@ export default function DoctorDashboard() {
 
   const fetchAppointments = async () => {
     try {
-      const res  = await fetch("http://localhost:5000/api/appointments/my", { headers:{ Authorization:`Bearer ${token}` } });
+      const res  = await fetch("https://aarogya-ai-uugr.onrender.com/api/appointments/my", { headers:{ Authorization:`Bearer ${token}` } });
       const data = await res.json();
       setAppointments(Array.isArray(data) ? data : []);
     } catch { setAppointments([]); }
@@ -196,7 +196,7 @@ export default function DoctorDashboard() {
   const fetchAvailability = async () => {
     try {
       const decoded  = JSON.parse(atob(token.split(".")[1]));
-      const res      = await fetch(`http://localhost:5000/api/appointments/availability/${decoded.id}`);
+      const res      = await fetch(`https://aarogya-ai-uugr.onrender.com/api/appointments/availability/${decoded.id}`);
       const data     = await res.json();
       setAvailableDates(Array.isArray(data) ? data : []);
     } catch {}
@@ -211,7 +211,7 @@ const updateStatus = async (id, newStatus, e) => {
   try {
 
     const res = await fetch(
-      `http://localhost:5000/api/appointments/update-status/${id}`,
+      `https://aarogya-ai-uugr.onrender.com/api/appointments/update-status/${id}`,
       {
         method: "PUT",
         headers: {
@@ -249,7 +249,7 @@ const updateStatus = async (id, newStatus, e) => {
     if (sel < today) return showToast("Cannot add past dates", false);
     setAdding(true);
     try {
-      const res  = await fetch("http://localhost:5000/api/appointments/add-availability", {
+      const res  = await fetch("https://aarogya-ai-uugr.onrender.com/api/appointments/add-availability", {
         method:"POST",
         headers:{ "Content-Type":"application/json", Authorization:`Bearer ${token}` },
         body:JSON.stringify({ date:availabilityDate }),

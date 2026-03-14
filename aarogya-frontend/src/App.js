@@ -33,7 +33,7 @@ export default function App() {
       if (!token) return;
 
       try {
-        const res = await fetch("http://localhost:5000/api/auth/me", {
+        const res = await fetch("https://aarogya-ai-uugr.onrender.com/api/auth/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

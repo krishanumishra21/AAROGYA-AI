@@ -175,7 +175,7 @@ export default function Profile() {
     e.preventDefault();
     setSaving(true);
     try {
-      const res  = await fetch("http://localhost:5000/api/auth/update-profile", {
+      const res  = await fetch("https://aarogya-ai-uugr.onrender.com/api/auth/update-profile", {
         method: "PUT",
         headers: { "Content-Type":"application/json", Authorization:`Bearer ${token}` },
         body: JSON.stringify(formData),

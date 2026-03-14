@@ -29,7 +29,7 @@ export default function DoctorAppointmentDetail() {
   const fetchAppointment = async () => {
     try {
       const res = await fetch(
-        "http://localhost:5000/api/appointments/my",
+        "https://aarogya-ai-uugr.onrender.com/api/appointments/my",
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -57,7 +57,7 @@ export default function DoctorAppointmentDetail() {
 
   const fetchHistory = async (patientId) => {
     const res = await fetch(
-      `http://localhost:5000/api/prescriptions/patient/${patientId}`,
+      `https://aarogya-ai-uugr.onrender.com/api/prescriptions/patient/${patientId}`,
       {
         headers: { Authorization: `Bearer ${token}` }
       }
@@ -77,7 +77,7 @@ export default function DoctorAppointmentDetail() {
       setLoadingSummary(true);
 
       const res = await fetch(
-        `http://localhost:5000/api/ai/summary/${appointment.patient._id}`,
+        `https://aarogya-ai-uugr.onrender.com/api/ai/summary/${appointment.patient._id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -132,7 +132,7 @@ export default function DoctorAppointmentDetail() {
     if (file) formData.append("file", file);
 
     const res = await fetch(
-      "http://localhost:5000/api/prescriptions",
+      "https://aarogya-ai-uugr.onrender.com/api/prescriptions",
       {
         method: "POST",
         headers: {
@@ -228,7 +228,7 @@ export default function DoctorAppointmentDetail() {
 
             {p.fileUrl && (
               <a
-                href={`http://localhost:5000/${p.fileUrl}`}
+                href={`https://aarogya-ai-uugr.onrender.com/${p.fileUrl}`}
                 target="_blank"
                 rel="noreferrer"
                 className="text-blue-600"

@@ -228,8 +228,8 @@ export default function PatientDashboard() {
         const token = localStorage.getItem("token");
         const headers = { Authorization: `Bearer ${token}` };
         const [apptRes, presRes] = await Promise.all([
-          fetch("http://localhost:5000/api/appointments/my", { headers }),
-          fetch("http://localhost:5000/api/prescriptions/my", { headers }),
+          fetch("https://aarogya-ai-uugr.onrender.com/api/appointments/my", { headers }),
+          fetch("https://aarogya-ai-uugr.onrender.com/api/prescriptions/my", { headers }),
         ]);
         setAppointments(apptRes.ok ? await apptRes.json() : []);
         setPrescriptions(presRes.ok ? await presRes.json() : []);
@@ -425,13 +425,13 @@ export default function PatientDashboard() {
                       {p.fileUrl && (
                         <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
                           <button
-                            onClick={() => window.open(`http://localhost:5000${p.fileUrl}`, "_blank")}
+                            onClick={() => window.open(`https://aarogya-ai-uugr.onrender.com${p.fileUrl}`, "_blank")}
                             style={{ fontSize: 12, padding: "6px 14px", borderRadius: 8, border: "1px solid #3b82f6", color: "#3b82f6", background: "transparent", cursor: "pointer", fontWeight: 600 }}
                           >
                             👁 View PDF
                           </button>
                           <a
-                            href={`http://localhost:5000${p.fileUrl}`}
+                            href={`https://aarogya-ai-uugr.onrender.com${p.fileUrl}`}
                             download
                             style={{ fontSize: 12, padding: "6px 14px", borderRadius: 8, border: "1px solid #10b981", color: "#10b981", background: "transparent", cursor: "pointer", fontWeight: 600, textDecoration: "none" }}
                           >

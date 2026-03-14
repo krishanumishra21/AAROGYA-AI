@@ -180,9 +180,9 @@ export default function AdminDashboard() {
     (async () => {
       try {
         const [u,d,a] = await Promise.all([
-          fetch("http://localhost:5000/api/auth/me",{headers:{Authorization:`Bearer ${token}`}}).then(r=>r.json()),
-          fetch("http://localhost:5000/api/auth/doctors",{headers:{Authorization:`Bearer ${token}`}}).then(r=>r.json()),
-          fetch("http://localhost:5000/api/appointments/hospital",{headers:{Authorization:`Bearer ${token}`}}).then(r=>r.json()),
+          fetch("https://aarogya-ai-uugr.onrender.com/api/auth/me",{headers:{Authorization:`Bearer ${token}`}}).then(r=>r.json()),
+          fetch("https://aarogya-ai-uugr.onrender.com/api/auth/doctors",{headers:{Authorization:`Bearer ${token}`}}).then(r=>r.json()),
+          fetch("https://aarogya-ai-uugr.onrender.com/api/appointments/hospital",{headers:{Authorization:`Bearer ${token}`}}).then(r=>r.json()),
         ]);
         if (u?.hospital)      setHospital(u.hospital);
         if (Array.isArray(d)) setDoctors(d);
@@ -202,7 +202,7 @@ export default function AdminDashboard() {
     };
     try {
       const token = localStorage.getItem("token");
-      await fetch("http://localhost:5000/api/auth/admin/create-doctor", {
+      await fetch("https://aarogya-ai-uugr.onrender.com/api/auth/admin/create-doctor", {
         method:"POST",
         headers:{ "Content-Type":"application/json", Authorization:`Bearer ${token}` },
         body: JSON.stringify({ ...doc, password: fd.get("password") }),

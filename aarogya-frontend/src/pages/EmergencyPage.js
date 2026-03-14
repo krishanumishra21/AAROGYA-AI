@@ -8,7 +8,7 @@ export default function EmergencyPage() {
   useEffect(() => {
     const fetchUser = async () => {
       const res = await fetch(
-        `http://localhost:5000/api/emergency/${id}`
+        `https://aarogya-ai-uugr.onrender.com/api/emergency/${id}`
       );
       const data = await res.json();
       setUser(data);

@@ -21,8 +21,8 @@ export default function Auth() {
     e.preventDefault();
 
     const endpoint = isSignup
-      ? "http://localhost:5000/api/auth/register"
-      : "http://localhost:5000/api/auth/login";
+      ? "https://aarogya-ai-uugr.onrender.com/api/auth/register"
+      : "https://aarogya-ai-uugr.onrender.com/api/auth/login";
 
     const bodyData = isSignup
       ? { ...formData, role }

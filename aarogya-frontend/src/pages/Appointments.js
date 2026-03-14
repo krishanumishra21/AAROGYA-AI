@@ -208,14 +208,14 @@ export default function Appointments() {
   const selDoc    = doctors.find(d => d._id === selectedDoctor);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/auth/hospitals")
+    fetch("https://aarogya-ai-uugr.onrender.com/api/auth/hospitals")
       .then(r => r.json()).then(setHospitals).catch(console.error);
   }, []);
 
   useEffect(() => {
     if (!selectedHospital) return;
     setLoadingDoctors(true);
-    fetch(`http://localhost:5000/api/appointments/doctors/${selectedHospital}`)
+    fetch(`https://aarogya-ai-uugr.onrender.com/api/appointments/doctors/${selectedHospital}`)
       .then(r => r.json()).then(d => { setDoctors(d); setLoadingDoctors(false); })
       .catch(() => setLoadingDoctors(false));
   }, [selectedHospital]);
@@ -228,7 +228,7 @@ export default function Appointments() {
   const handleBook = async () => {
     setBooking(true);
     try {
-      const res  = await fetch("http://localhost:5000/api/appointments/book", {
+      const res  = await fetch("https://aarogya-ai-uugr.onrender.com/api/appointments/book", {
         method: "POST",
         headers: { "Content-Type":"application/json", Authorization:`Bearer ${token}` },
         body: JSON.stringify({ doctor:selectedDoctor, hospital:selectedHospital, date:selectedDate.toISOString() }),

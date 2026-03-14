@@ -11,7 +11,7 @@ export default function DoctorAppointments() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        "http://localhost:5000/api/appointments/doctor",
+        "https://aarogya-ai-uugr.onrender.com/api/appointments/doctor",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -37,7 +37,7 @@ export default function DoctorAppointments() {
       const token = localStorage.getItem("token");
 
       await fetch(
-        `http://localhost:5000/api/appointments/${id}/status`,
+        `https://aarogya-ai-uugr.onrender.com/api/appointments/${id}/status`,
         {
           method: "PUT",
           headers: {

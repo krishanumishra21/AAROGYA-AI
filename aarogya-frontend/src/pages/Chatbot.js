@@ -129,7 +129,7 @@ export default function Chatbot() {
     try {
       const token = localStorage.getItem("token");
 
-      const aiRes = await fetch("http://localhost:5000/api/chat", {
+      const aiRes = await fetch("https://aarogya-ai-uugr.onrender.com/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -147,7 +147,7 @@ export default function Chatbot() {
       if (hasSymptom) {
         try {
           const recRes = await fetch(
-            "http://localhost:5000/api/ai/recommend-doctor",
+            "https://aarogya-ai-uugr.onrender.com/api/ai/recommend-doctor",
             {
               method: "POST",
               headers: {
