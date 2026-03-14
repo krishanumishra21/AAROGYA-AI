@@ -21,6 +21,22 @@ const EMERGENCY_KEYWORDS = [
   "stroke",
 ];
 
+const SYMPTOM_KEYWORDS = [
+  "pain",
+  "fever",
+  "headache",
+  "chest",
+  "heart",
+  "rash",
+  "skin",
+  "bone",
+  "joint",
+  "vomit",
+  "cough",
+  "infection",
+  "dizziness",
+];
+
 function TypingDots() {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 4, padding: "12px 16px" }}>
@@ -67,7 +83,6 @@ export default function Chatbot() {
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const bottomRef = useRef(null);
-  const inputRef = useRef(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -82,7 +97,6 @@ export default function Chatbot() {
       minute: "2-digit",
     });
 
-    // user message
     setMessages((prev) => [
       ...prev,
       {
@@ -99,29 +113,22 @@ export default function Chatbot() {
     const lower = trimmed.toLowerCase();
 
     // 🚨 Emergency detection
-  let emergencyDetected = false
+    let emergencyDetected = EMERGENCY_KEYWORDS.some((kw) => lower.includes(kw));
 
-for (let kw of EMERGENCY_KEYWORDS) {
- if (lower.includes(kw)) {
-   emergencyDetected = true
- }
-}
-
-if (emergencyDetected) {
- setMessages(prev => [
-  ...prev,
-  {
-   id: Date.now()+Math.random(),
-   from:"bot",
-   text:"⚠️ This may be a medical emergency. Please seek medical help immediately."
-  }
- ])
-}
+    if (emergencyDetected) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + Math.random(),
+          from: "bot",
+          text: "⚠️ This may be a medical emergency. Please seek medical help immediately.",
+        },
+      ]);
+    }
 
     try {
       const token = localStorage.getItem("token");
 
-      // LLaMA AI response
       const aiRes = await fetch("http://localhost:5000/api/chat", {
         method: "POST",
         headers: {
@@ -134,24 +141,27 @@ if (emergencyDetected) {
 
       let finalReply = `🧠 AI Medical Insight\n\n${aiData.reply}`;
 
-      // Doctor recommendation
-      try {
-        const recRes = await fetch(
-          "http://localhost:5000/api/ai/recommend-doctor",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ symptom: trimmed }),
-          }
-        );
+      // Check if message contains symptoms
+      const hasSymptom = SYMPTOM_KEYWORDS.some((k) => lower.includes(k));
 
-        const recData = await recRes.json();
+      if (hasSymptom) {
+        try {
+          const recRes = await fetch(
+            "http://localhost:5000/api/ai/recommend-doctor",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ symptom: trimmed }),
+            }
+          );
 
-        if (recData.doctors && recData.doctors.length > 0) {
-          finalReply += `
+          const recData = await recRes.json();
+
+          if (recData.doctors && recData.doctors.length > 0) {
+            finalReply += `
 
 🏥 Hospital: ${recData.hospital}
 🩺 Recommended Department: ${recData.specialization}
@@ -159,18 +169,29 @@ if (emergencyDetected) {
 Available Doctors:
 `;
 
-          recData.doctors.forEach((doc) => {
-            finalReply += `• ${doc.name}\n`;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
 
-            if (doc.availableDates && doc.availableDates.length > 0) {
-              finalReply += `  Slots: ${doc.availableDates
-                .map((d) => new Date(d).toLocaleDateString())
-                .join(", ")}\n`;
-            }
-          });
+            recData.doctors.forEach((doc) => {
+              if (doc.availableDates) {
+                const futureDates = doc.availableDates.filter((d) => {
+                  const date = new Date(d);
+                  date.setHours(0, 0, 0, 0);
+                  return date >= today;
+                });
+
+                if (futureDates.length > 0) {
+                  finalReply += `• ${doc.name}\n`;
+                  finalReply += `  Slots: ${futureDates
+                    .map((d) => new Date(d).toLocaleDateString())
+                    .join(", ")}\n`;
+                }
+              }
+            });
+          }
+        } catch {
+          console.log("Doctor recommendation failed");
         }
-      } catch {
-        console.log("Doctor recommendation failed");
       }
 
       setTyping(false);
@@ -306,7 +327,6 @@ Available Doctors:
           }}
         >
           <input
-            ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage(input)}
