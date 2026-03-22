@@ -191,7 +191,9 @@ export default function Profile() {
     }
   };
 
-  const qrData    = `http://localhost:3000/emergency/${user?._id || ""}`;
+  const BASE_URL = "https://aarogya-client.vercel.app";
+
+  const qrData = `${BASE_URL}/emergency/${user?._id || ""}`;
   const downloadQR = () => {
     const canvas = document.getElementById("qr-code");
     const url    = canvas.toDataURL("image/png").replace("image/png","image/octet-stream");
